@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Run&Bad Guillaume</title>
+<meta name="description" content="Carnet d'entraînement personnel — course à pied, renforcement et badminton.">
+<meta name="theme-color" content="#0e2019">
+
+<!-- PWA -->
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Run&Bad">
+<link rel="icon" href="icons/icon-192.png">
+
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="app">
+
+  <div class="topbar">
+    <div>
+      <div class="topbar-title">Run&amp;Bad Guillaume</div>
+      <div class="topbar-date" id="topDate"></div>
+    </div>
+    <button class="topbar-plus" data-tab="more" title="Plus">⋯</button>
+  </div>
+
+  <main>
+
+    <!-- ACCUEIL ------------------------------------------------------ -->
+    <div class="panel active" id="panel-today">
+      <h2 class="panel-title">Aujourd'hui</h2>
+      <div id="todayContent"></div>
+      <div class="dash-strip" id="todayBilan"></div>
+    </div>
+
+    <!-- SEMAINE -------------------------------------------------------- -->
+    <div class="panel" id="panel-week">
+      <h2 class="panel-title">Semaine</h2>
+      <div class="week-nav-bar">
+        <button class="btn small" id="weekPrevBtn">◀</button>
+        <div class="week-nav-label" id="weekNavLabel"></div>
+        <button class="btn small" id="weekNextBtn">▶</button>
+      </div>
+      <div class="reset-wrap" id="jumpTodayWrap" style="display:none;"><button class="btn small" id="jumpTodayBtn">Revenir à cette semaine</button></div>
+      <div class="dash-strip" id="weekBilan"></div>
+      <div class="week-grid" id="weekGrid"></div>
+      <div class="reset-wrap"><button class="btn small" id="resetBtn">Vider cette semaine</button></div>
+    </div>
+
+    <!-- CARNET ----------------------------------------------------------- -->
+    <div class="panel" id="panel-journal">
+      <h2 class="panel-title">Carnet</h2>
+      <div id="journalContent"></div>
+    </div>
+
+    <!-- PLUS (menu secondaire) -------------------------------------------- -->
+    <div class="panel" id="panel-more">
+      <h2 class="panel-title">Plus</h2>
+      <div class="more-list">
+        <div class="more-item" data-more="progress"><span class="mi-icon">📈</span><span class="mi-label">Ma progression</span><span class="mi-chevron">›</span></div>
+        <div class="more-item" data-more="status"><span class="mi-icon">🩺</span><span class="mi-label">Statut du sportif</span><span class="mi-chevron">›</span></div>
+        <div class="more-item" data-more="stats"><span class="mi-icon">📊</span><span class="mi-label">Statistiques</span><span class="mi-chevron">›</span></div>
+        <div class="more-item" data-more="records"><span class="mi-icon">🏅</span><span class="mi-label">Records</span><span class="mi-chevron">›</span></div>
+        <div class="more-item" data-more="library"><span class="mi-icon">📚</span><span class="mi-label">Bibliothèque de séances</span><span class="mi-chevron">›</span></div>
+        <div class="more-item" data-more="settings"><span class="mi-icon">⚙️</span><span class="mi-label">Paramètres</span><span class="mi-chevron">›</span></div>
+        <div class="more-item" data-more="data"><span class="mi-icon">🗂️</span><span class="mi-label">Mes données</span><span class="mi-chevron">›</span></div>
+      </div>
+    </div>
+
+    <!-- PROGRESSION -------------------------------------------------------- -->
+    <div class="panel" id="panel-progress">
+      <div class="back-row"><button class="back-btn" data-back="more">‹ Plus</button></div>
+      <h2 class="panel-title">Ma progression</h2>
+      <div id="progressList"></div>
+    </div>
+
+    <!-- STATUT --------------------------------------------------------------- -->
+    <div class="panel" id="panel-status">
+      <div class="back-row"><button class="back-btn" data-back="more">‹ Plus</button></div>
+      <h2 class="panel-title">Statut du sportif</h2>
+      <div id="statusSummary"></div>
+      <div id="statusList"></div>
+    </div>
+
+    <!-- STATISTIQUES ------------------------------------------------------------ -->
+    <div class="panel" id="panel-stats">
+      <div class="back-row"><button class="back-btn" data-back="more">‹ Plus</button></div>
+      <h2 class="panel-title">Statistiques</h2>
+      <div id="statsContent"></div>
+    </div>
+
+    <!-- RECORDS -------------------------------------------------------------------- -->
+    <div class="panel" id="panel-records">
+      <div class="back-row"><button class="back-btn" data-back="more">‹ Plus</button></div>
+      <h2 class="panel-title">Records</h2>
+      <div id="recordsContent"></div>
+    </div>
+
+    <!-- BIBLIOTHÈQUE ----------------------------------------------------------------- -->
+    <div class="panel" id="panel-library">
+      <div class="back-row"><button class="back-btn" data-back="more">‹ Plus</button></div>
+      <h2 class="panel-title">Bibliothèque de séances</h2>
+      <div id="libraryList"></div>
+      <div id="libFormArea"></div>
+      <div class="reset-wrap"><button class="btn small" id="addLibBtn">+ Nouvelle séance</button></div>
+    </div>
+
+    <!-- PARAMÈTRES ---------------------------------------------------------------------- -->
+    <div class="panel" id="panel-settings">
+      <div class="back-row"><button class="back-btn" data-back="more">‹ Plus</button></div>
+      <h2 class="panel-title">Paramètres</h2>
+      <div id="settingsContent"></div>
+    </div>
+
+    <!-- DONNÉES ------------------------------------------------------------------------- -->
+    <div class="panel" id="panel-data">
+      <div class="back-row"><button class="back-btn" data-back="more">‹ Plus</button></div>
+      <h2 class="panel-title">Mes données</h2>
+      <div id="dataContent"></div>
+    </div>
+
+  </main>
+
+  <div class="status-line" id="statusLine"></div>
+
+  <nav class="tabbar">
+    <button class="tab active" data-tab="today">
+      <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11.5 12 4l8 7.5"/><path d="M6 10v9h12v-9"/></svg>
+      Aujourd'hui
+    </button>
+    <button class="tab" data-tab="week">
+      <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M8 3v4M16 3v4"/></svg>
+      Semaine
+    </button>
+    <button class="tab" data-tab="carnet">
+      <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4.5c0-.6.4-1 1-1h6v17H6c-.6 0-1-.4-1-1z"/><path d="M19 4.5c0-.6-.4-1-1-1h-6v17h6c.6 0 1-.4 1-1z"/></svg>
+      Carnet
+    </button>
+    <button class="tab" data-tab="more">
+      <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="12" r="1.3" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.3" fill="currentColor" stroke="none"/><circle cx="19" cy="12" r="1.3" fill="currentColor" stroke="none"/></svg>
+      Plus
+    </button>
+  </nav>
+</div>
+
+<script src="js/app.js"></script>
+</body>
+</html>

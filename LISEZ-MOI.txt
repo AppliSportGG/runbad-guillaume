@@ -1,0 +1,87 @@
+RUN&BAD GUILLAUME — v2.0 (stable)
+=====================================
+
+CETTE VERSION EST CONSIDÉRÉE COMME STABLE
+--------------------------------------------
+Aucune nouvelle fonctionnalité n'a été ajoutée depuis la v2. Ce passage
+en v2.0 est un travail de finition : ergonomie, design, fiabilité hors
+connexion, performance. Le fonctionnement (bibliothèque de séances,
+cycle, semaine, carnet, statut, statistiques, records, paramètres,
+export/import) reste strictement identique.
+
+CE QUI A ÉTÉ VÉRIFIÉ ET AMÉLIORÉ DANS CETTE PASSE
+-----------------------------------------------------
+- Accueil : confirmé comme tableau de bord (séance du jour, durée, cible,
+  objectif, bouton "Démarrer la séance", résumé de la semaine en dessous).
+- Design : espacements augmentés, cartes plus aérées, transitions très
+  discrètes (apparition douce des écrans, pas d'animation qui se
+  remarque), icônes de la barre de navigation refaites en dessin
+  vectoriel homogène (au lieu d'emoji, rendu plus proche d'une vraie
+  montre de sport).
+- Polices système : l'appli n'appelle plus aucune police en ligne
+  (Google Fonts a été retiré). Elle utilise directement la police du
+  téléphone. Conséquence directe : zéro dépendance réseau pour
+  l'affichage, et un fonctionnement hors connexion garanti dès la
+  première ouverture — pas seulement "probable".
+- Hors connexion : testé noir sur blanc (rechargement complet réseau
+  coupé, l'appli s'affiche et fonctionne normalement) une fois hébergée
+  en https (voir plus bas). Le service worker met en cache les 9 fichiers
+  qui composent l'appli (HTML, CSS, JS, manifest, icônes) — rien d'autre
+  n'est nécessaire au fonctionnement.
+- Export / Import : testés (export télécharge un JSON complet et
+  correct, import restaure les données) — accessibles depuis Plus →
+  Mes données.
+- Code : repassé pour retirer toute déclaration inutilisée ; aucune
+  fonctionnalité superflue ajoutée.
+
+
+IMPORTANT — POURQUOI IL FAUT L'HÉBERGER (une seule fois, 10 minutes)
+-----------------------------------------------------------------------
+Le mode hors connexion réel et l'installation "propre" façon application
+(icône plein écran, sans barre d'adresse) reposent sur un "service
+worker". Par sécurité, tous les navigateurs interdisent son
+fonctionnement sur un fichier ouvert en local (file://) — ce n'est pas
+une limite de cette application, c'est une règle universelle du web.
+
+La solution la plus simple et gratuite : GitHub Pages.
+
+  1. Crée un compte gratuit sur https://github.com (si tu n'en as pas déjà un)
+  2. Crée un nouveau dépôt (repository), par exemple "runbad-guillaume"
+     → coche "Public"
+  3. Sur la page du dépôt, clique sur "Add file" → "Upload files"
+  4. Glisse-dépose TOUT le contenu de ce dossier (index.html, css/, js/,
+     manifest.json, service-worker.js, icons/) — garde la même structure
+  5. Valide ("Commit changes")
+  6. Va dans Settings → Pages → Source : choisis la branche "main" et
+     le dossier "/ (root)" → Save
+  7. Après 1-2 minutes, ton appli est en ligne à une adresse du type :
+     https://TON-PSEUDO.github.io/runbad-guillaume/
+
+Ouvre cette adresse dans Chrome sur ton téléphone, puis :
+  ⋮ (menu Chrome) → "Installer l'application" (ou "Ajouter à l'écran
+  d'accueil"). Ce sera alors une vraie installation PWA, testée hors
+  connexion.
+
+En attendant cette étape, tu peux toujours ouvrir index.html directement
+(double-clic / Chrome) : l'application fonctionne et sauvegarde tes
+données normalement sur cet appareil — il te manquera seulement le mode
+hors-ligne garanti et l'icône d'installation native.
+
+
+SAUVEGARDER TES DONNÉES
+-------------------------
+Dans l'appli : Plus → Mes données → "Exporter mes données". Un fichier
+JSON est téléchargé — garde-le en lieu sûr. Tu peux le réimporter
+n'importe quand depuis le même écran (utile si tu changes de téléphone).
+
+
+LIMITES HONNÊTES DE CETTE VERSION
+------------------------------------
+- Les données restent sur cet appareil, dans ce navigateur. Pas de
+  synchronisation automatique entre appareils (l'export/import JSON sert
+  de sauvegarde manuelle et de base à une synchro future, si tu la
+  souhaites un jour).
+- La conversion en APK Android n'est pas incluse : une fois hébergée et
+  installée en PWA, l'appli est déjà très proche d'une app native au
+  quotidien. Le passage en APK resterait une étape distincte, à
+  envisager plus tard si vraiment nécessaire.
