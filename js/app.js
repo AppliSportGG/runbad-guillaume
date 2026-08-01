@@ -90,21 +90,50 @@ const RUNNING_TYPES = ["SL1","I1","T1","T2","C1","F1","R1"];
 
 /* ------------------------------------------------------------------------
    3. DATES & SEMAINES
+   Règle stricte : tout est calculé en heure LOCALE du téléphone.
+   Aucun appel à toISOString() / getUTCDay() / Date.UTC() n'est utilisé
+   pour identifier "quel jour on est" — uniquement getFullYear/getMonth/
+   getDate/getDay, qui reflètent toujours le calendrier local de l'appareil.
    ------------------------------------------------------------------------ */
-const DAY_NAMES = ["Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi","Dimanche"];
+const DAY_NAMES = ["Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi","Dimanche"]; // index 0 = Lundi
 const MONTHS = ["janv.","févr.","mars","avr.","mai","juin","juil.","août","sept.","oct.","nov.","déc."];
+const MONTHS_FULL = ["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"];
 
-function isoDate(d){ return d.toISOString().slice(0,10); }
-function getMonday(d){ const date=new Date(d); const day=date.getDay(); const diff=(day===0?-6:1)-day; date.setDate(date.getDate()+diff); date.setHours(0,0,0,0); return date; }
+/** Nom du jour local (Lundi..Dimanche) à partir de Date.getDay() (0=Dimanche..6=Samedi). */
+function dayNameLocal(d){ return DAY_NAMES[(d.getDay()+6)%7]; }
+
+/** Clé "AAAA-MM-JJ" en heure locale — jamais de conversion UTC ici. */
+function isoDate(d){
+  const y = d.getFullYear();
+  const m = String(d.getMonth()+1).padStart(2,'0');
+  const day = String(d.getDate()).padStart(2,'0');
+  return `${y}-${m}-${day}`;
+}
+
+/** Lundi de la semaine locale contenant d. 0=dimanche,1=lundi,...,6=samedi (standard JS). */
+function getMonday(d){
+  const date=new Date(d.getFullYear(), d.getMonth(), d.getDate()); // minuit local, sans heure/minute résiduelle
+  const day=date.getDay(); // 0=dimanche .. 6=samedi
+  const diff=(day===0 ? -6 : 1-day); // ramène toujours au lundi de la semaine
+  date.setDate(date.getDate()+diff);
+  return date;
+}
 function fmtDate(d){ return d.getDate()+" "+MONTHS[d.getMonth()]; }
-function weekDatesFor(m){ return Array.from({length:7},(_,i)=>{ const d=new Date(m); d.setDate(d.getDate()+i); return d; }); }
+/** Affichage complet type "Samedi 1 août 2026", en heure locale. */
+function fmtFullDate(d){ return `${dayNameLocal(d)} ${d.getDate()} ${MONTHS_FULL[d.getMonth()]} ${d.getFullYear()}`; }
+
+function weekDatesFor(m){ return Array.from({length:7},(_,i)=>{ const d=new Date(m.getFullYear(), m.getMonth(), m.getDate()); d.setDate(d.getDate()+i); return d; }); }
 function keyForMonday(m){ return "plan:"+isoDate(m); }
+
+/** Numéro de semaine ISO-8601, calculé entièrement en local (aucun getUTC*). */
 function isoWeekNumber(d){
-  const date=new Date(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate()));
-  const dayNum=(date.getUTCDay()+6)%7;
-  date.setUTCDate(date.getUTCDate()-dayNum+3);
-  const firstThursday=new Date(Date.UTC(date.getUTCFullYear(),0,4));
-  return 1+Math.round(((date-firstThursday)/86400000-3+((firstThursday.getUTCDay()+6)%7))/7);
+  const date = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  const dayNum = (date.getDay()+6)%7; // 0=lundi..6=dimanche
+  date.setDate(date.getDate() - dayNum + 3); // jeudi de cette semaine-là
+  const firstThursday = new Date(date.getFullYear(), 0, 4);
+  const firstDayNum = (firstThursday.getDay()+6)%7;
+  firstThursday.setDate(firstThursday.getDate() - firstDayNum + 3);
+  return 1 + Math.round((date - firstThursday) / 86400000 / 7);
 }
 function emptyDay(session){ return { session, done:false, plaisir:null, rpe:null, fatigue:null, distance:null, notes:"" }; }
 
@@ -901,7 +930,7 @@ function wireNav(){
    20. DÉMARRAGE
    ------------------------------------------------------------------------ */
 function renderAll(){
-  document.getElementById('topDate').textContent = fmtDate(weekDates[0]).toUpperCase()+" → "+fmtDate(weekDates[6]).toUpperCase();
+  document.getElementById('topDate').textContent = fmtFullDate(today);
   const activePanel = document.querySelector('.panel.active');
   const activeId = activePanel ? activePanel.id.replace('panel-','') : 'today';
   showPanel(activeId);
@@ -911,7 +940,7 @@ function renderAll(){
   setStatusLine("chargement…");
   wireNav();
   await loadAll();
-  showPanel('today');
+  renderAll();
   setStatusLine("à jour");
 
   // Enregistrement du service worker (rend l'app utilisable hors connexion).

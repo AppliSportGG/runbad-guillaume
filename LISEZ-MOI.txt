@@ -1,5 +1,19 @@
-RUN&BAD GUILLAUME — v2.0 (stable)
+RUN&BAD GUILLAUME — v2.1 (stable)
 =====================================
+
+v2.1 — CORRECTIF IMPORTANT
+------------------------------
+Bug corrigé : l'application pouvait afficher le mauvais jour (ex. dimanche
+au lieu de samedi) selon l'heure et le fuseau horaire. Cause : le calcul
+des dates mélangeait heure locale et UTC (toISOString(), getUTCDay()).
+Tout le calcul de date a été repris pour n'utiliser QUE l'heure locale
+du téléphone (getFullYear/getMonth/getDate/getDay), du lundi de la
+semaine jusqu'au numéro de semaine ISO. Testé sur les cas limites
+(minuit pile, 23h59, changement de jour) en fuseau Europe/Paris.
+
+Ajout demandé : la date du jour complète ("Samedi 1 août 2026") s'affiche
+maintenant en permanence en haut de l'écran — un repère visuel immédiat
+si un souci de date devait un jour réapparaître.
 
 CETTE VERSION EST CONSIDÉRÉE COMME STABLE
 --------------------------------------------
